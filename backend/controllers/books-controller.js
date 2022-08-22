@@ -30,7 +30,7 @@ const getById = async (req, res, next) => {
 }
 
 const addBook = async (req, res, next) => {
-    const { name, author, description, price, available } = req.body; // Destructuring request body
+    const { name, author, description, price, available, image } = req.body; // Destructuring request body
     let book;
 
     try {
@@ -39,7 +39,8 @@ const addBook = async (req, res, next) => {
             author,
             description,
             price,
-            available
+            available,
+            image
         });
         await book.save();
     } catch (error) {
@@ -56,7 +57,7 @@ const addBook = async (req, res, next) => {
 
 const updateBook = async (req, res, next) => {
     const id = req.params.id;
-    const { name, author, description, price, available } = req.body;
+    const { name, author, description, price, available, image } = req.body;
     let book;
 
     try {
@@ -65,7 +66,8 @@ const updateBook = async (req, res, next) => {
             author,
             description,
             price,
-            available
+            available,
+            image
         });
         book = await book.save();
     } catch (error) {
@@ -78,8 +80,24 @@ const updateBook = async (req, res, next) => {
     return res.status(200).json({ book });
 }
 
+const deleteBook = async (req,res,next) => {
+    const id = req.params.id;
+    let book;
+
+    try {
+        book = await Book.findByIdAndRemove(id);
+    } catch (error) {
+        console.log(error);
+    }
+
+    if (!book) {
+        return res.status(404).json({ message: " Unable to delete the book with this id!" });
+    }
+    return res.status(200).json( { message: " Deleted book successfully!" });
+}
 
 exports.getAllBooks = getAllBooks;
 exports.addBook = addBook;
 exports.getById = getById;
 exports.updateBook = updateBook;
+exports.deleteBook = deleteBook;
